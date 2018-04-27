@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Web;
 using EPiServer.Cms.UI.AspNetIdentity;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell.Security;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
@@ -11,6 +14,21 @@ using Owin;
 
 namespace AlloyTemplates
 {
+    public class CustomApplicationUISignInManager<T> : ApplicationUISignInManager<T> where T : IdentityUser, IUIUser, new()
+    {
+        private readonly ServiceAccessor<ApplicationSignInManager<T>> _signInManager;
+
+        public CustomApplicationUISignInManager(ServiceAccessor<ApplicationSignInManager<T>> signInManager) : base(signInManager)
+        {
+            _signInManager = signInManager;
+        }
+
+        public override bool SignIn(string providerName, string userName, string password)
+        {
+            return _signInManager().SignIn(userName, password, string.Empty);
+        }
+    }
+
     public class Startup
     {
 
@@ -19,6 +37,7 @@ namespace AlloyTemplates
 
             // Add CMS integration for ASP.NET Identity
             app.AddCmsAspNetIdentity<ApplicationUser>();
+            app.CreatePerOwinContext<UISignInManager>((options, context) => new CustomApplicationUISignInManager<ApplicationUser>(context.Get<ApplicationSignInManager<ApplicationUser>>));
 
             // Remove to block registration of administrators
             app.UseAdministratorRegistrationPage(() => HttpContext.Current.Request.IsLocal);

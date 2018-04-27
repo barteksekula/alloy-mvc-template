@@ -1,0 +1,32 @@
+﻿@using EPiServer.Globalization
+@model AlloyTemplates.Models.LoginModel
+
+@{ Layout = "~/Views/Shared/Layouts/_Root.cshtml"; }
+
+<style>
+    .login-form {
+        margin: auto;
+        width: 400px;
+    }
+</style>
+
+<div class="row">
+    @using (Html.BeginForm("Post", null, new {language = ContentLanguage.PreferredCulture.Name}))
+    {
+        <div class="well login-form">
+            <div>
+                @Html.AntiForgeryToken()
+                <h2>Log in</h2>
+                @Html.LabelFor(m => m.LoginPostbackData.Username)
+                @Html.TextBoxFor(m => m.LoginPostbackData.Username)
+
+                @Html.LabelFor(m => m.LoginPostbackData.Password)
+                @Html.PasswordFor(m => m.LoginPostbackData.Password)
+
+                @Html.HiddenFor(m => m.LoginPostbackData.ReturnUrl)
+            </div>
+            <input type="submit" value="Log in" class="btn btn-primary"/>
+            @Html.DisplayFor(m => m.Message)
+        </div>
+    }
+</div>
