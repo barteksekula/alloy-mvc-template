@@ -1,4 +1,4 @@
-using AlloyTemplates.Models.Blocks;
+﻿using AlloyTemplates.Models.Blocks;
 using AlloyTemplates.Models.Pages;
 using EPiServer.Cms.TinyMce.Core;
 using EPiServer.Framework;
@@ -34,7 +34,7 @@ namespace AlloyTemplates.Business.Initialization
                 // Passing a second argument to For<> will clone the given settings object
                 // instead of the default one and extend it with some basic toolbar commands.
                 config.For<EditorialBlock>(t => t.MainBody, config.Empty())
-                    .Plugins(DefaultValues.EpiserverPlugins)
+                    .AddEpiserverSupport()
                     .DisableMenubar()
                     .Toolbar("bold italic underline strikethrough");
             });
